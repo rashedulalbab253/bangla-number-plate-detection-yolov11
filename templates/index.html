@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bangla Plate Detector | AI Dashboard</title>
+    <link rel="icon" type="image/png" href="/static/logo.png">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #3b82f6;
+            --primary-glow: rgba(59, 130, 246, 0.5);
+            --bg: #030712;
+            --card-bg: rgba(17, 24, 39, 0.7);
+            --text-main: #f3f4f6;
+            --text-dim: #9ca3af;
+            --accent: #60a5fa;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Outfit', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg);
+            background-image:
+                radial-gradient(circle at 20% 20%, rgba(59, 130, 246, 0.15) 0%, transparent 40%),
+                radial-gradient(circle at 80% 80%, rgba(96, 165, 250, 0.1) 0%, transparent 40%);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow-x: hidden;
+        }
+
+        /* Navbar */
+        nav {
+            padding: 1.5rem 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 800;
+            background: linear-gradient(90deg, #3b82f6, #60a5fa);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -1px;
+        }
+
+        /* Hero / Main Content */
+        main {
+            flex: 1;
+            padding: 2rem 5%;
+            max-width: 1400px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .header-section {
+            text-align: center;
+            margin-bottom: 3rem;
+            animation: fadeInDown 0.8s ease-out;
+        }
+
+        .header-section h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+
+        .header-section p {
+            color: var(--text-dim);
+            font-size: 1.1rem;
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        @media (max-width: 968px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Glass Card Style */
+        .glass-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 24px;
+            padding: 2rem;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        /* Upload Area */
+        .upload-zone {
+            border: 2px dashed rgba(59, 130, 246, 0.3);
+            border-radius: 20px;
+            height: 400px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            background: rgba(59, 130, 246, 0.02);
+        }
+
+        .upload-zone:hover {
+            border-color: var(--primary);
+            background: rgba(59, 130, 246, 0.05);
+            transform: scale(1.01);
+        }
+
+        .upload-zone.dragover {
+            border-color: var(--accent);
+            background: rgba(59, 130, 246, 0.1);
+        }
+
+        .upload-icon {
+            width: 64px;
+            height: 64px;
+            background: rgba(59, 130, 246, 0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1.5rem;
+            color: var(--primary);
+        }
+
+        #fileInput {
+            display: none;
+        }
+
+        /* Result View */
+        .result-view {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        .image-container {
+            flex: 1;
+            background: #000;
+            border-radius: 16px;
+            overflow: hidden;
+            position: relative;
+            min-height: 350px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        #resultImg {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            transition: opacity 0.5s ease;
+        }
+
+        .stats-panel {
+            margin-top: 1.5rem;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 1rem;
+        }
+
+        .stat-item {
+            background: rgba(255, 255, 255, 0.03);
+            padding: 1rem;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .stat-label {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            color: var(--text-dim);
+            letter-spacing: 0.05rem;
+            margin-bottom: 0.3rem;
+        }
+
+        .stat-value {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--accent);
+        }
+
+        /* Buttons */
+        .btn {
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px var(--primary-glow);
+            width: 100%;
+            margin-top: 1.5rem;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px var(--primary-glow);
+            filter: brightness(1.1);
+        }
+
+        .btn:disabled {
+            background: #4b5563;
+            cursor: not-allowed;
+            box-shadow: none;
+        }
+
+        /* Loading */
+        .loader {
+            position: absolute;
+            display: none;
+            width: 40px;
+            height: 40px;
+            border: 3px solid rgba(255, 255, 255, 0.1);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .history-section {
+            margin-top: 3rem;
+            animation: fadeInUp 1s ease-out;
+        }
+
+        .history-title {
+            font-size: 1.25rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .history-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .history-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            overflow: hidden;
+            transition: transform 0.3s ease;
+        }
+
+        .history-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--primary);
+        }
+
+        .history-img {
+            height: 120px;
+            width: 100%;
+            object-fit: cover;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .history-info {
+            padding: 10px 15px;
+            font-size: 0.85rem;
+            display: flex;
+            justify-content: space-between;
+            color: var(--text-dim);
+        }
+
+        /* Slider Styles */
+        .slider-container {
+            margin-top: 2rem;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 12px;
+        }
+
+        input[type="range"] {
+            width: 100%;
+            height: 6px;
+            background: #1f2937;
+            border-radius: 5px;
+            outline: none;
+            -webkit-appearance: none;
+            appearance: none;
+            margin-top: 10px;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 18px;
+            height: 18px;
+            background: var(--primary);
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 0 10px var(--primary-glow);
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <nav>
+        <div class="logo">
+            <img src="/static/logo.png" alt="Logo"
+                style="height: 32px; margin-right: 10px; vertical-align: middle; border-radius: 6px;">
+            BANGLA CORE AI
+        </div>
+        <div class="nav-links">v11.0 Standard</div>
+    </nav>
+
+    <main>
+        <div class="header-section">
+            <h1>Bangla License Plate Recognition</h1>
+            <p>High-precision Bengali ALPR system engineered for real-time traffic intelligence.</p>
+        </div>
+
+        <div class="dashboard-grid">
+            <!-- Left: Upload Section -->
+            <div class="glass-card">
+                <div class="upload-zone" id="dropZone">
+                    <div class="upload-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                            <polyline points="17 8 12 3 7 8" />
+                            <line x1="12" y1="3" x2="12" y2="15" />
+                        </svg>
+                    </div>
+                    <p>Click to upload or drag image here</p>
+                    <span style="font-size: 0.8rem; color: var(--text-dim); margin-top: 0.5rem;">JPEG, JPG, PNG
+                        supported</span>
+                    <input type="file" id="fileInput" accept="image/jpeg, image/jpg, image/png">
+                </div>
+                <button class="btn" id="scanBtn" disabled>Scan Plate Now</button>
+
+                <!-- Confidence Control -->
+                <div class="slider-container">
+                    <div style="display: flex; justify-content: space-between; font-size: 0.85rem;">
+                        <span>Confidence Threshold</span>
+                        <span id="confVal" style="color: var(--primary); font-weight: 600;">25%</span>
+                    </div>
+                    <input type="range" id="confSlider" min="10" max="95" value="25">
+                    <p style="font-size: 0.75rem; color: #6b7280; margin-top: 8px;">Higher values reduce false
+                        positives.</p>
+                </div>
+            </div>
+
+            <!-- Right: Results Section -->
+            <div class="glass-card result-view">
+                <div class="image-container">
+                    <div class="loader" id="loader"></div>
+                    <img id="resultImg" src="" style="display: none;">
+                    <div class="placeholder-text" id="placeholder">Processed view will appear here</div>
+                </div>
+
+                <div class="stats-panel">
+                    <div class="stat-item">
+                        <div class="stat-label">Inference Time</div>
+                        <div class="stat-value" id="infTime">--</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">Confidence</div>
+                        <div class="stat-value" id="confScore">--</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-label">Object Class</div>
+                        <div class="stat-value" id="objClass">None</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- History Section -->
+        <div class="history-section">
+            <div class="history-title">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10" />
+                    <polyline points="12 6 12 12 16 14" />
+                </svg>
+                Recent Session Activity
+            </div>
+            <div class="history-grid" id="historyGrid">
+                <!-- History items added here -->
+                <p style="color: #4b5563; grid-column: 1/-1;">No recent activity in this session.</p>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        const dropZone = document.getElementById('dropZone');
+        const fileInput = document.getElementById('fileInput');
+        const scanBtn = document.getElementById('scanBtn');
+        const resultImg = document.getElementById('resultImg');
+        const loader = document.getElementById('loader');
+        const placeholder = document.getElementById('placeholder');
+
+        const confSlider = document.getElementById('confSlider');
+        const confVal = document.getElementById('confVal');
+        const historyGrid = document.getElementById('historyGrid');
+
+        let selectedFile = null;
+
+        confSlider.addEventListener('input', (e) => {
+            confVal.innerText = e.target.value + '%';
+        });
+
+        // Trigger file input
+        dropZone.addEventListener('click', () => fileInput.click());
+
+        // File handle
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) handleFile(e.target.files[0]);
+        });
+
+        // Drag and drop
+        dropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropZone.classList.add('dragover');
+        });
+
+        dropZone.addEventListener('dragleave', () => dropZone.classList.remove('dragover'));
+
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropZone.classList.remove('dragover');
+            if (e.dataTransfer.files.length > 0) handleFile(e.dataTransfer.files[0]);
+        });
+
+        function handleFile(file) {
+            selectedFile = file;
+            scanBtn.disabled = false;
+            // Preview in upload zone (optional, for UX)
+            dropZone.querySelector('p').innerText = file.name;
+        }
+
+        scanBtn.addEventListener('click', async () => {
+            if (!selectedFile) return;
+
+            const formData = new FormData();
+            formData.append('file', selectedFile);
+            const conf = confSlider.value / 100;
+
+            // UI State
+            scanBtn.disabled = true;
+            loader.style.display = 'block';
+            placeholder.style.display = 'none';
+            resultImg.style.display = 'none';
+
+            try {
+                const response = await fetch(`/detect?conf=${conf}`, {
+                    method: 'POST',
+                    body: formData
+                });
+                const data = await response.json();
+
+                if (data.image_url) {
+                    resultImg.src = data.image_url + '?t=' + new Date().getTime();
+                    resultImg.style.display = 'block';
+
+                    document.getElementById('infTime').innerText = data.process_time;
+
+                    if (data.detections && data.detections.length > 0) {
+                        document.getElementById('confScore').innerText = data.detections[0].confidence;
+                        document.getElementById('objClass').innerText = data.detections[0].class;
+                    } else {
+                        document.getElementById('confScore').innerText = '0%';
+                        document.getElementById('objClass').innerText = 'No Plate';
+                    }
+
+                    // Update History Gallery
+                    if (data.history) {
+                        updateHistory(data.history);
+                    }
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Detection failed. Is the server running?');
+            } finally {
+                loader.style.display = 'none';
+                scanBtn.disabled = false;
+            }
+        });
+
+        function updateHistory(history) {
+            historyGrid.innerHTML = '';
+            history.forEach(item => {
+                const card = document.createElement('div');
+                card.className = 'history-card';
+                card.innerHTML = `
+                    <img src="${item.img}" class="history-img">
+                    <div class="history-info">
+                        <span>${item.time}</span>
+                        <span style="color: var(--primary)">${item.count} Detected</span>
+                    </div>
+                `;
+                card.onclick = () => {
+                    resultImg.src = item.img;
+                };
+                historyGrid.appendChild(card);
+            });
+        }
+    </script>
+</body>
+
+</html>

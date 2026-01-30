@@ -1,0 +1,13 @@
+torch
+ultralytics
+tensorflow
+supervision
+requests
+fastapi
+uvicorn
+python-multipart
+gradio
+onnx
+tf2onnx
+onnxruntime
+gradio

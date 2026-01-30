@@ -1,0 +1,123 @@
+description: Ultralytics YOLO11n model trained on /mnt/storage2/Enam/YOLOv11/NumberPlateDetection/truck_ocr_dataset_new/Bangla_License_Plate.yaml
+author: Ultralytics
+date: '2025-05-24T10:36:56.469377'
+version: 8.3.141
+license: AGPL-3.0 License (https://ultralytics.com/license)
+docs: https://docs.ultralytics.com
+stride: 32
+task: detect
+batch: 1
+imgsz:
+- 640
+- 640
+names:
+  0: '0'
+  1: '1'
+  2: '2'
+  3: '3'
+  4: '4'
+  5: '5'
+  6: '6'
+  7: '7'
+  8: '8'
+  9: '9'
+  10: Metro
+  11: A
+  12: Bha
+  13: Cha
+  14: Chha
+  15: Da
+  16: DA
+  17: E
+  18: Ga
+  19: Gha
+  20: Ha
+  21: Ja
+  22: Jha
+  23: Ka
+  24: Kha
+  25: La
+  26: Ma
+  27: Na
+  28: Pa
+  29: Sa
+  30: Sha
+  31: Ta
+  32: THA
+  33: Tha
+  34: U
+  35: Bagerhat
+  36: Bagura
+  37: Bandarban
+  38: Barguna
+  39: Barisal
+  40: Bhola
+  41: Brahmanbaria
+  42: Chandpur
+  43: Nawabganj
+  44: Chatto
+  45: Chattogram
+  46: Chuadanga
+  47: Cox's Bazar
+  48: Cumilla
+  49: Dhaka
+  50: Dinajpur
+  51: Faridpur
+  52: Feni
+  53: Gaibandha
+  54: Gazipur
+  55: Gopalganj
+  56: Habiganj
+  57: Jamalpur
+  58: Jessore
+  59: Jhalokati
+  60: Jhenaidah
+  61: Joypurhat
+  62: Khagrachari
+  63: Khulna
+  64: Kishoreganj
+  65: Kurigram
+  66: Kustia
+  67: Lakshmipur
+  68: Lalmonirhat
+  69: Madaripur
+  70: Magura
+  71: Manikganj
+  72: Meherpur
+  73: Moulvibazar
+  74: Mymensingh
+  75: Naogaon
+  76: Narail
+  77: Narayanganj
+  78: Narsingdi
+  79: Natore
+  80: Netrokona
+  81: Nilphamari
+  82: Noakhali
+  83: Pabna
+  84: Panchagarh
+  85: Patuakhali
+  86: Pirojpur
+  87: Raj
+  88: Rajbari
+  89: Rajshahi
+  90: Rangamati
+  91: Rangpur
+  92: Satkhira
+  93: Shariatpur
+  94: Sherpur
+  95: Sirajganj
+  96: Sunamganj
+  97: Sylhet
+  98: Tangail
+  99: Thakurgaon
+  100: Dha
+  101: Ba
+  102: Bazar
+args:
+  batch: 1
+  fraction: 1.0
+  half: false
+  int8: false
+  nms: false
+channels: 3
