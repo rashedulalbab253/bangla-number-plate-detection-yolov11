@@ -25,7 +25,7 @@ This project leverages the **YOLOv11** architecture to provide a robust solution
 
 1. **Clone the repository**:
    ```bash
-   git clone [repository-url]
+   git clone https://github.com/rashedulalbab253/Bangla-Number-Plate-Detection-YOLOv11.git
    cd number-plate-detection
    ```
 
@@ -62,6 +62,27 @@ To compare inference speeds across different formats (OpenVINO, ONNX, etc.):
 ```bash
 python infertime_comparison_preprocessed.py
 ```
+
+---
+
+## 🐳 Docker Deployment (Optional)
+This project is fully containerized. To run it using Docker:
+
+1. **Build the image**:
+   ```bash
+   docker build -t rashedulalbab1234/bangla-alpr-system .
+   ```
+
+2. **Run the container**:
+   ```bash
+   docker run -p 8000:8000 rashedulalbab1234/bangla-alpr-system
+   ```
+Visit `http://localhost:8000` to access the dashboard.
+
+3. **Push to Docker Hub (for Developers)**:
+   ```bash
+   docker push rashedulalbab1234/bangla-alpr-system
+   ```
 
 ---
 
