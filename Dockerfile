@@ -4,13 +4,15 @@ FROM python:3.12-slim
 # Set the working directory in the container
 WORKDIR /app
 
-# Set environment variables to prevent interactive prompts during installation
+# Set environment variables
 ENV DEBIAN_FRONTEND=noninteractive
+ENV PYTHONUNBUFFERED=1
 
-# Install system dependencies for OpenCV and other ML libraries
-# Added -qq for quiet mode and fixed the apt-get structure for better reliability
-RUN apt-get update -qq && apt-get install -y -qq \
-    libgl1-mesa-glx \
+# Install system dependencies
+# We remove -qq to see the full output in case of failure
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+    libgl1 \
     libglib2.0-0 \
     libsm6 \
     libxext6 \
@@ -18,7 +20,7 @@ RUN apt-get update -qq && apt-get install -y -qq \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-# Copy the requirements file first to leverage Docker cache
+# Copy the requirements file first
 COPY requirements.txt .
 
 # Install dependencies
@@ -27,8 +29,8 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy the rest of the application code
 COPY . .
 
-# Expose the port the app runs on
+# Expose the port
 EXPOSE 8000
 
-# Command to run the application
+# Command to run
 CMD ["python", "app.py"]
