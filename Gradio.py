@@ -70,6 +70,7 @@ def detect_license_plates(input_image):
 
 # Create Gradio interface
 with gr.Blocks(title="License Plate Detection") as demo:
+    gr.HTML('<div style="text-align: right; font-size: 0.7rem; color: #9ca3af; margin-bottom: -20px;">Developed by Rashedul Albab</div>')
     gr.Markdown("# License Plate Detection")
     gr.Markdown("Upload an image to detect license plates")
     

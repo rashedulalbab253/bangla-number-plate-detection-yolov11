@@ -351,10 +351,24 @@
                 transform: translateY(0);
             }
         }
+
+        .developer-credit {
+            position: fixed;
+            top: 10px;
+            right: 20px;
+            font-size: 0.7rem;
+            color: var(--text-dim);
+            font-weight: 300;
+            z-index: 2000;
+            pointer-events: none;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
     </style>
 </head>
 
 <body>
+    <div class="developer-credit">Developed by Rashedul Albab</div>
     <nav>
         <div class="logo">
             <img src="/static/logo.png" alt="Logo"
