@@ -51,13 +51,26 @@ python app.py
 ```
 Open your browser and navigate to `http://127.0.0.1:8000`.
 
-### 2. Basic Command Line Detection
+### 2. Launch the Gradio Interface
+An alternative, lightweight web interface built with Gradio:
+```bash
+python Gradio.py
+```
+This will launch a Gradio server (usually at `http://127.0.0.1:7860`).
+
+### 3. Basic Command Line Detection
 For processing a single image via CLI:
 ```bash
 python detect.py --image "path/to/your/image.jpg"
 ```
 
-### 3. Model Performance Benchmarking
+### 4. Batch Folder Processing
+To process an entire directory of images and save the annotated results:
+```bash
+python detectfolder.py
+```
+
+### 5. Model Performance Benchmarking
 To compare inference speeds across different formats (OpenVINO, ONNX, etc.):
 ```bash
 python infertime_comparison_preprocessed.py
